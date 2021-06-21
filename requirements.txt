@@ -3,3 +3,4 @@ streamlit==0.79.0
 gspread==3.6.0
 datetime
 email-validator
+oauth2client
