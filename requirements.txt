@@ -1,6 +1,4 @@
 pandas==1.2.3
 streamlit==0.79.0
 datetime
-gspread
-request
 email-validator
