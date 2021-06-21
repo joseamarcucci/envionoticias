@@ -219,4 +219,4 @@ if display_code == "Envios":
   df5=pd.value_counts(datan['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
-  st.sidebar.write('No enviados:',aulast) 
+  st.sidebar.write('Enviados:',aulast) 
