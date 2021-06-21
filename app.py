@@ -174,7 +174,7 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
             sheet2.append_row([hoy2,to_email,news, 'No enviada; mal nombre de dominio'])
             continue
           from validate_email import validate_email
-          is_valid = validate_email(email_address=to_email, check_format=True)
+          is_valid = validate_email(to_email)
     
           if is_valid==None:
             server.sendmail(from_email, to_email, message.as_string())
