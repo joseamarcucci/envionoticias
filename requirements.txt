@@ -4,6 +4,5 @@ streamlit==0.79.0
 datetime
 altair
 gspread
-validate_email
 request
 email-validator
