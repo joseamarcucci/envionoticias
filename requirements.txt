@@ -1,0 +1,9 @@
+
+pandas==1.2.3
+streamlit==0.79.0
+datetime
+altair
+gspread
+py3-validate-email
+request
+email-validator
