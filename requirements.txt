@@ -6,4 +6,4 @@ email-validator
 oauth2client
 urllib3==1.24.3
 py3-validate-email
-smtplib
+
