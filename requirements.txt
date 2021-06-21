@@ -4,6 +4,6 @@ streamlit==0.79.0
 datetime
 altair
 gspread
-py3-validate-email==0.1.10
+validate-email
 request
 email-validator
