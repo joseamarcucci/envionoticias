@@ -83,7 +83,7 @@ st.markdown(
      .css-qbe2hs a{ text-decoration: none;}
       .st-bx {
     color: rgb(38, 39, 48);
-    border: 1px solid #dedede;
+   
 }
     </style>
 """, unsafe_allow_html=True) 
