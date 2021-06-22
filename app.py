@@ -100,7 +100,7 @@ row_values_list = sheet.get_all_records()
 from_email = 'yzur76@gmail.com'
 password = 'hocwnvbdeoenagtt'
 st.sidebar.markdown('<img style="float: left;width:100%;margin-top:-40px;" src="https://noticias.usal.edu.ar/sites/default/files/logon_1.jpg" />', unsafe_allow_html=True)
-display_code =   st.sidebar.radio("Mostrar", ( "Enviar Newsletter","No enviados", "Envios"))
+display_code =   st.sidebar.radio("Mostrar", ( "Enviar Newsletter","No enviados", "Enviados"))
 today = date.today()
 
 hoy2=today.strftime('%d-%m-%y')
@@ -202,7 +202,7 @@ if display_code == "No enviados":
   st.sidebar.write('No enviados:',aulast) 
   #dupli.index = [""] * len(dupli) 
   #st.table(dupli)
-if display_code == "Envios":
+if display_code == "Enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
   datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
   datan=datan.sort_values(by=['fecha'],ascending=False)
