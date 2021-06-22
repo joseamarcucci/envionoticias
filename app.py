@@ -41,7 +41,7 @@ st.markdown(
     border: 2px solid rgb(246, 51, 102);
     border-radius: 3px;
 }
-        .css-17eq0hr {
+        .css-1l02zno {
     background-color: #fff;
     background-attachment: fixed;
     border-right:2px solid #008357;
@@ -83,7 +83,7 @@ st.markdown(
      .css-qbe2hs a{ text-decoration: none;}
       .st-bx {
     color: rgb(38, 39, 48);
-    border: 1px solid #dedede;
+    
 }
     </style>
 """, unsafe_allow_html=True) 
