@@ -175,8 +175,8 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
             continue
           from validate_email import validate_email
           is_valid = validate_email(email_address=to_email, check_format=True)
-          st.write(is_valid)
-          if is_valid==None:
+          
+          if is_valid==True:
             server.sendmail(from_email, to_email, message.as_string())
             sheet2.append_row([hoy2,to_email,news, 'enviada'])
        
