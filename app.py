@@ -41,7 +41,7 @@ st.markdown(
     border: 2px solid rgb(246, 51, 102);
     border-radius: 3px;
 }
-        .css-1l02zno {
+        .css-17eq0hr {
     background-color: #fff;
     background-attachment: fixed;
     border-right:2px solid #008357;
@@ -78,12 +78,12 @@ st.markdown(
     width: auto;
     text-decoration: none;
     background-color: rgb(255, 255, 255);
-   
+    border: 1px solid rgba(38, 39, 48, 0.2);
 }
      .css-qbe2hs a{ text-decoration: none;}
       .st-bx {
     color: rgb(38, 39, 48);
-   
+    border: 1px solid #dedede;
 }
     </style>
 """, unsafe_allow_html=True) 
@@ -174,7 +174,7 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
             sheet2.append_row([hoy2,to_email,news, 'No enviada; mal nombre de dominio'])
             continue
           from validate_email import validate_email
-          is_valid = validate_email(to_email)
+          is_valid = validate_email(email_address=to_email, check_format=True)
     
           if is_valid==None:
             server.sendmail(from_email, to_email, message.as_string())
@@ -196,7 +196,7 @@ if display_code == "No enviados":
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
   #st.markdown(datan.index.tolist())
   st.dataframe(dupli)
-  df5=pd.value_counts(datan['destinatario']) 
+  df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
   st.sidebar.write('No enviados:',aulast) 
@@ -211,12 +211,12 @@ if display_code == "Enviados":
   options = ['No enviada; mal nombre de dominio','No enviada; mal nombre en la cuenta'] 
   # selecting rows based on condition 
   datan = datan.loc[~datan['estado'].isin(options)]
-  datan.index = [""] * len(datan) 
   datanu=datan['fecha'] == country
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
+  dupli.index = [""] * len(dupli) 
   #st.markdown(datan.index.tolist())
   st.dataframe(dupli)
-  df5=pd.value_counts(datan['destinatario']) 
+  df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
-  st.sidebar.write('Enviados:',aulast) 
+  st.sidebar.write('No enviados:',aulast) 
