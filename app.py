@@ -185,7 +185,7 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
       st.sidebar.write(news+' Enviada')
 if display_code == "No enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
-  datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
+  datan = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
   datan=datan.sort_values(by=['fecha'],ascending=False)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
@@ -204,7 +204,7 @@ if display_code == "No enviados":
   #st.table(dupli)
 if display_code == "Enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
-  datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
+  datan = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
   datan=datan.sort_values(by=['fecha'],ascending=False)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
