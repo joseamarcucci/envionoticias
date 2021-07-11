@@ -161,7 +161,7 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
   
      
     
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as server:
+        with smtplib.SMTP_SSL('mail.clayss.org', 465) as server:
           server.login(from_email, password)
           from email_validator import validate_email, EmailNotValidError 
           try:
