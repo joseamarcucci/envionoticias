@@ -97,8 +97,8 @@ sheet2 = gclient.open('noticiasusal').worksheet('envios')
 row_values_list = sheet.get_all_records()
 
 # specify email and GMail App Password
-from_email = 'yzur76@gmail.com'
-password = 'hocwnvbdeoenagtt'
+from_email = 'pruebas@clayss.org'
+password = 'pruebas2021'
 st.sidebar.markdown('<img style="float: left;width:100%;margin-top:-40px;" src="https://noticias.usal.edu.ar/sites/default/files/logon_1.jpg" />', unsafe_allow_html=True)
 display_code =   st.sidebar.radio("Mostrar", ( "Enviar Newsletter","No enviados", "Enviados"))
 today = date.today()
