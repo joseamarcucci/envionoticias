@@ -1,4 +1,6 @@
 import streamlit as st
+
+from st_aggrid import AgGrid
 import smtplib
 import ssl
 import datetime
@@ -106,7 +108,7 @@ today = date.today()
 hoy2=today.strftime('%d-%m-%y')
     #SHEET_ID = '12D4hfpuIkT7vM69buu-v-r-UYb8xx4wM1zi-34Fs9ck'
 data=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv')
-#data=data.sort_values(by=['orden'],ascending=False)
+#data=data.sort_values(by=['orden'],ascending=True)
 imagen=str(data.iloc[-1]['imagen'])
 news=str(data.iloc[-1]['newsletter'])
 # iterate on every row of the Google Sheet
@@ -185,8 +187,8 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
       st.sidebar.write(news+' Enviada')
 if display_code == "No enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
-  datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
-  datan=datan.sort_values(by=['fecha'],ascending=False)
+  #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
+  datan=datan.sort_values(by=['fecha'],ascending=True)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
   options = ['enviada'] 
@@ -194,8 +196,13 @@ if display_code == "No enviados":
   datan.index = [""] * len(datan) 
   datanu=datan['fecha'] == country
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
+  dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
   #st.markdown(datan.index.tolist())
-  st.dataframe(dupli)
+  #st.dataframe(dupli)
+  #ag_grid(dupli[['Fecha','Destinatario','Newsletter', 'Estado']])
+  
+  AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
+  
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
@@ -204,8 +211,8 @@ if display_code == "No enviados":
   #st.table(dupli)
 if display_code == "Enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
-  datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
-  datan=datan.sort_values(by=['fecha'],ascending=False)
+  #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
+  datan=datan.sort_values(by=['fecha'],ascending=True)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
   options = ['No enviada; mal nombre de dominio','No enviada; mal nombre en la cuenta'] 
@@ -213,9 +220,11 @@ if display_code == "Enviados":
   datan = datan.loc[~datan['estado'].isin(options)]
   datanu=datan['fecha'] == country
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
+  dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
   dupli.index = [""] * len(dupli) 
   #st.markdown(datan.index.tolist())
-  st.dataframe(dupli)
+  #st.dataframe(dupli)
+  AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
