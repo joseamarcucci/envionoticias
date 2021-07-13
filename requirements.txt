@@ -6,6 +6,6 @@ email-validator
 py3-validate-email
 oauth2client
 urllib3==1.24.3
-streamlit-aggrid
+
 
 
