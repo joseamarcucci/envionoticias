@@ -122,24 +122,32 @@ options = data['imagen'].tolist()
 
 dic = dict(zip(options, values))
 
+if display_code == 'Enviar Newsletter':
+   a = buff1.selectbox('Seleccionar Newsletter:', options, format_func=lambda x: dic[x])
 
-a = buff1.selectbox('Seleccionar Newsletter:', options, format_func=lambda x: dic[x])
-
-news=data["newsletter"].loc[data["imagen"] == a].to_string(index = False)
-orden2=data["orden"].loc[data["imagen"] == a].to_string(index = False)
+   news=data["newsletter"].loc[data["imagen"] == a].to_string(index = False)
+   orden2=data["orden"].loc[data["imagen"] == a].to_string(index = False)
 
 
 
 #reunion = data['newsletter'] ==a
 #data=data.sort_values(by=['orden'],ascending=True)
-imagen=str(data.iloc[-1]['imagen'])
-news0=str(data.iloc[-1]['newsletter'])
+   imagen=str(data.iloc[-1]['imagen'])
+   news0=str(data.iloc[-1]['newsletter'])
 
 
 # iterate on every row of the Google Sheet
 if display_code=='Enviar Newsletter':
     #st.write(news)
     st.markdown ('<!DOCTYPE html><html><body><a href="https://noticias.usal.edu.ar"><img  width="800" src="'+a+'" /></a></body></html>', unsafe_allow_html=True)
+    data = data=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=91437221')
+    df0 = pd.DataFrame(data, columns=['nombre', 'base'])
+    df0=df0.sort_values(by=['nombre'],ascending=True)
+    values = df0['nombre'].tolist()
+    options = df0['base'].tolist()
+    dic = dict(zip(options, values))
+    a = st.sidebar.selectbox('Seleccionar base:', options, format_func=lambda x: dic[x])
+    sheet = gclient.open('noticiasusal').worksheet(a)
     if st.sidebar.button('Enviar'):
       for row_value in row_values_list:
 
@@ -202,7 +210,7 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
     
             next_row = sheet2.cell(str(len(str_list)), 1).value 
 
-            sheet2.append_row([int(next_row)+1,hoy2,to_email,news, 'No enviada; mal nombre de dominio',orden])
+            sheet2.append_row([int(next_row)+1,hoy2,a,to_email,news, 'No enviada; mal nombre de dominio'])
             continue
           from validate_email import validate_email
           is_valid = validate_email(email_address=to_email, check_format=True)
@@ -213,21 +221,22 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
     
             next_row = sheet2.cell(str(len(str_list)), 1).value 
             server.sendmail(from_email, to_email, message.as_string())
-            sheet2.append_row([int(next_row)+1, hoy2,to_email,news, 'enviada',orden])
+            sheet2.append_row([int(next_row)+1, hoy2,a,to_email,news, 'enviada'])
        
           else:
                         
             str_list = list(filter(None, sheet2.col_values(1)))
     
             next_row = sheet2.cell(str(len(str_list)), 1).value 
-            sheet2.append_row([int(next_row)+1,hoy2,to_email,news, 'No enviada; mal nombre en la cuenta',orden])
+            sheet2.append_row([int(next_row)+1,hoy2,a,to_email,news, 'No enviada; mal nombre en la cuenta'])
       st.sidebar.write(news+' Enviada')
 if display_code == "No enviados":
+  #buff1.markdown("<h5>Envio</h5>", unsafe_allow_html=True)
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
   #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
   datan=datan.sort_values(by=['orden'],ascending=False)
   countries = datan['fecha'].unique()
-  country = buff1.selectbox('Fecha:', countries)
+  country = buff1.selectbox('Envio Viernes:', countries)
   options = ['enviada'] 
   datan = datan.loc[~datan['estado'].isin(options)]
 
@@ -245,7 +254,8 @@ if display_code == "No enviados":
   #ag_grid(dupli[['Fecha','Destinatario','Newsletter', 'Estado']])
   
   #AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
-  st.table(dupli[['fecha','newsletter','destinatario','estado']])
+  st.dataframe(dupli[['fecha','newsletter','base','destinatario','estado']])
+
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
@@ -256,18 +266,21 @@ if display_code == "Enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
   #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
   datan=datan.sort_values(by=['orden'],ascending=False)
+  #buff1.markdown("<h5>Envio</h5>", unsafe_allow_html=True)
   countries = datan['fecha'].unique()
-  country = buff1.selectbox('Fecha:', countries)
+  country = buff1.selectbox('Envio Viernes:', countries)
   options = ['No enviada; mal nombre de dominio','No enviada; mal nombre en la cuenta'] 
   # selecting rows based on condition 
   datan = datan.loc[~datan['estado'].isin(options)]
+  datan.index = [""] * len(datan)
   datanu=datan['fecha'] == country
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
-  dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
-  dupli.index = [""] * len(dupli) 
+  #dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
+  #dupli.index = [""] * len(dupli) 
   #st.markdown(datan.index.tolist())
   #st.dataframe(dupli)
-  st.table(dupli[['fecha','newsletter','destinatario','estado']])
+  #st.table(dupli[['fecha','newsletter','destinatario','estado']])
+  st.dataframe(dupli[['fecha','newsletter','base','destinatario','estado']])
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
