@@ -1,6 +1,6 @@
 import streamlit as st
 
-from st_aggrid import AgGrid
+
 import smtplib
 import ssl
 import datetime
@@ -91,10 +91,15 @@ st.markdown(
 """, unsafe_allow_html=True) 
 
 #st.sidebar.markdown("<h2 style='text-align: left; color: #00b8e1;'>Envio de Noticias</h2>", unsafe_allow_html=True)
-buff1,buff, col = st.beta_columns([1,2,2])
+buff1,buff, col = st.beta_columns([2,2,2])
 # specify the correct name of the Google Sheet
 sheet = gclient.open('noticiasusal').worksheet('datos')
 sheet2 = gclient.open('noticiasusal').worksheet('envios')
+
+
+#insert on the next available row
+#st.write(next_row)
+#sheet2.update_acell("A{}".format(next_row), v+1)
 # Get all values in the Google Sheet
 row_values_list = sheet.get_all_records()
 
@@ -108,13 +113,33 @@ today = date.today()
 hoy2=today.strftime('%d-%m-%y')
     #SHEET_ID = '12D4hfpuIkT7vM69buu-v-r-UYb8xx4wM1zi-34Fs9ck'
 data=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv')
+data=data.sort_values(by=['orden'],ascending=False)
+# Create the pandas DataFrame
+#df0 = pd.DataFrame(data, columns=['Webinar', 'Planilla'])
+
+values = data['newsletter'].tolist()
+options = data['imagen'].tolist()
+
+dic = dict(zip(options, values))
+
+
+a = buff1.selectbox('Seleccionar Newsletter:', options, format_func=lambda x: dic[x])
+
+news=data["newsletter"].loc[data["imagen"] == a].to_string(index = False)
+orden2=data["orden"].loc[data["imagen"] == a].to_string(index = False)
+
+
+
+#reunion = data['newsletter'] ==a
 #data=data.sort_values(by=['orden'],ascending=True)
 imagen=str(data.iloc[-1]['imagen'])
-news=str(data.iloc[-1]['newsletter'])
+news0=str(data.iloc[-1]['newsletter'])
+
+
 # iterate on every row of the Google Sheet
 if display_code=='Enviar Newsletter':
-    st.write(news)
-    st.markdown ('<!DOCTYPE html><html><body><a href="https://noticias.usal.edu.ar"><img  width="800" src="'+imagen+'" /></a></body></html>', unsafe_allow_html=True)
+    #st.write(news)
+    st.markdown ('<!DOCTYPE html><html><body><a href="https://noticias.usal.edu.ar"><img  width="800" src="'+a+'" /></a></body></html>', unsafe_allow_html=True)
     if st.sidebar.button('Enviar'):
       for row_value in row_values_list:
 
@@ -172,37 +197,55 @@ Web: <a href="https://noticias.usal.edu.ar">https://noticias.usal.edu.ar/es</a><
 
 
           except EmailNotValidError as e:
+            
+            str_list = list(filter(None, sheet2.col_values(1)))
+    
+            next_row = sheet2.cell(str(len(str_list)), 1).value 
 
-            sheet2.append_row([hoy2,to_email,news, 'No enviada; mal nombre de dominio'])
+            sheet2.append_row([int(next_row)+1,hoy2,to_email,news, 'No enviada; mal nombre de dominio',orden])
             continue
           from validate_email import validate_email
           is_valid = validate_email(email_address=to_email, check_format=True)
           
           if is_valid==True or is_valid==None:
+                        
+            str_list = list(filter(None, sheet2.col_values(1)))
+    
+            next_row = sheet2.cell(str(len(str_list)), 1).value 
             server.sendmail(from_email, to_email, message.as_string())
-            sheet2.append_row([hoy2,to_email,news, 'enviada'])
+            sheet2.append_row([int(next_row)+1, hoy2,to_email,news, 'enviada',orden])
        
           else:
-            sheet2.append_row([hoy2,to_email,news, 'No enviada; mal nombre en la cuenta'])
+                        
+            str_list = list(filter(None, sheet2.col_values(1)))
+    
+            next_row = sheet2.cell(str(len(str_list)), 1).value 
+            sheet2.append_row([int(next_row)+1,hoy2,to_email,news, 'No enviada; mal nombre en la cuenta',orden])
       st.sidebar.write(news+' Enviada')
 if display_code == "No enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
   #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
-  datan=datan.sort_values(by=['fecha'],ascending=True)
+  datan=datan.sort_values(by=['orden'],ascending=False)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
   options = ['enviada'] 
   datan = datan.loc[~datan['estado'].isin(options)]
-  datan.index = [""] * len(datan) 
+
+  datan.index = [""] * len(datan)
   datanu=datan['fecha'] == country
+  #newdf = datan[(datan.fecha == countries)]
+  #st.write(datan.filter(items=['orden2']))
+  #datanu=datan['orden2'] == orden2  
+
+
   dupli=datan[datanu].drop_duplicates(subset = ['destinatario'])
-  dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
+  #dupli['fecha52'] = pd.to_datetime(dupli['fecha']).dt.strftime('%d/%m/%y')
   #st.markdown(datan.index.tolist())
   #st.dataframe(dupli)
   #ag_grid(dupli[['Fecha','Destinatario','Newsletter', 'Estado']])
   
-  AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
-  
+  #AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
+  st.table(dupli[['fecha','newsletter','destinatario','estado']])
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
@@ -212,7 +255,7 @@ if display_code == "No enviados":
 if display_code == "Enviados":
   datan=pd.read_csv('https://docs.google.com/spreadsheets/d/1meITYOoR_Mh34RjXrI5-gsI7SzPb_JlaHpsvqtcecm4/export?format=csv&gid=70901914')
   #datan['fecha'] = pd.to_datetime(datan['fecha']).dt.strftime('%d/%m/%y')
-  datan=datan.sort_values(by=['fecha'],ascending=True)
+  datan=datan.sort_values(by=['orden'],ascending=False)
   countries = datan['fecha'].unique()
   country = buff1.selectbox('Fecha:', countries)
   options = ['No enviada; mal nombre de dominio','No enviada; mal nombre en la cuenta'] 
@@ -224,7 +267,7 @@ if display_code == "Enviados":
   dupli.index = [""] * len(dupli) 
   #st.markdown(datan.index.tolist())
   #st.dataframe(dupli)
-  AgGrid(dupli[['fecha','newsletter','destinatario','estado']])
+  st.table(dupli[['fecha','newsletter','destinatario','estado']])
   df5=pd.value_counts(dupli['destinatario']) 
   times3t=df5.index
   aulast=len(times3t) 
